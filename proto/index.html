@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en" data-cursor="native">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Preview — layout study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+/* ==========================================================================
+   LAYOUT STUDY — dense, image-first, persistent split.
+   Deliberately NOT the previous structure: no hero headline, no display type,
+   no whitespace-as-luxury, no numbered section march. The fixed column holds
+   the information; the stage holds the work.
+   ========================================================================== */
+
+:root{
+  --void:#080908; --mass:#111312; --raised:#1a1d1c;
+  --fg:#f2f0ec; --fg2:#a9aeab; --fg3:#6c716e;
+  --oxide:#c75c3a;
+  --rule:rgba(242,240,236,.13);
+  --rail: 340px;
+  --pad: 22px;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --sans:'Archivo','Helvetica Neue',Arial,sans-serif;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--void); color:var(--fg);
+  font-family:var(--sans); font-size:14px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+ul,ol{margin:0;padding:0;list-style:none}
+h1,h2,h3,p{margin:0}
+
+.mono{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-variant-numeric:tabular-nums}
+.dim{color:var(--fg2)} .dim2{color:var(--fg3)}
+
+/* ---------- Shell: fixed rail + scrolling stage ------------------------- */
+.shell{display:grid;grid-template-columns:var(--rail) 1fr;min-height:100vh}
+
+.rail{
+  position:sticky; top:0; height:100vh;
+  display:grid; grid-template-rows:auto auto 1fr auto;
+  border-right:1px solid var(--rule);
+  background:var(--void); z-index:5;
+}
+.rail__block{padding:var(--pad);border-bottom:1px solid var(--rule)}
+.rail__block:last-child{border-bottom:0}
+
+.wordmark{display:flex;align-items:baseline;gap:10px}
+.wordmark b{font-weight:700;font-size:17px;letter-spacing:-.02em;text-transform:uppercase}
+.wordmark span{color:var(--oxide)}
+
+/* Live metadata — swaps as you scroll the stage. This is the rail's job. */
+.meta{display:grid;gap:0}
+.meta__row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--rule)}
+.meta__row:last-child{border-bottom:0}
+.meta__row dt{color:var(--fg3)}
+.meta__row dd{margin:0;font-family:var(--mono);font-size:11px;text-align:right;font-variant-numeric:tabular-nums}
+
+.idx{overflow-y:auto;padding:var(--pad)}
+.idx__t{color:var(--fg3);margin-bottom:10px}
+.idx a{display:grid;grid-template-columns:22px 1fr;gap:8px;padding:7px 0;border-bottom:1px solid var(--rule);color:var(--fg3);transition:color .18s}
+.idx a .n{font-family:var(--mono);font-size:10px}
+.idx a .t{font-size:13px;font-weight:500}
+.idx a:hover,.idx a:focus-visible{color:var(--fg)}
+.idx a[aria-current="true"]{color:var(--fg)}
+.idx a[aria-current="true"] .n{color:var(--oxide)}
+
+.rail__foot{padding:var(--pad);display:grid;gap:6px}
+
+/* ---------- Stage: full-bleed media, minimal chrome --------------------- */
+.stage{min-width:0}
+
+.plate{position:relative;height:100vh;border-bottom:1px solid var(--rule);overflow:hidden}
+.plate img{width:100%;height:100%;object-fit:cover;filter:saturate(.82) contrast(1.04)}
+.plate::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,9,8,.72) 0%,rgba(8,9,8,.15) 42%,rgba(8,9,8,.55) 100%)}
+
+.plate__label{position:absolute;left:var(--pad);bottom:var(--pad);z-index:2;display:grid;gap:5px;max-width:min(46ch,60%)}
+.plate__title{font-size:clamp(20px,2.1vw,30px);font-weight:600;letter-spacing:-.02em;line-height:1.05}
+.plate__note{color:var(--fg2);font-size:13px}
+.plate__tr{position:absolute;right:var(--pad);top:var(--pad);z-index:2;text-align:right;display:grid;gap:3px}
+
+/* A dense contact-sheet band — the opposite of one-image-per-screen. */
+.band{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--rule)}
+.band figure{margin:0;position:relative;aspect-ratio:4/5;overflow:hidden;border-right:1px solid var(--rule)}
+.band figure:last-child{border-right:0}
+.band img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.05);transition:filter .35s, transform .6s}
+.band figure:hover img{filter:none;transform:scale(1.03)}
+.band figcaption{position:absolute;left:10px;bottom:9px;z-index:2}
+
+/* A real data table — the drawing register, not a card grid. */
+.reg{padding:var(--pad)}
+.reg table{width:100%;border-collapse:collapse}
+.reg th{text-align:left;color:var(--fg3);font-weight:400;padding:0 10px 8px 0;border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+.reg td{padding:9px 10px 9px 0;border-bottom:1px solid var(--rule);font-size:13px;vertical-align:top}
+.reg tr{transition:background .18s}
+.reg tbody tr:hover{background:var(--mass)}
+.reg .t{font-weight:600}
+.reg .num{font-family:var(--mono);font-size:11px;color:var(--fg2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.reg .st{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg3)}
+.reg .st[data-s="built"]{color:var(--oxide)}
+
+.split{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--rule)}
+.split > *{padding:calc(var(--pad)*1.6);border-right:1px solid var(--rule)}
+.split > *:last-child{border-right:0}
+.split h2{font-size:15px;font-weight:600;margin-bottom:10px}
+.split p{color:var(--fg2);font-size:13px;max-width:46ch}
+
+.foot{padding:var(--pad);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+@media (max-width:1000px){
+  .shell{grid-template-columns:1fr}
+  .rail{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule)}
+  .idx{max-height:none}
+  .band{grid-template-columns:repeat(2,1fr)}
+  .split{grid-template-columns:1fr}
+  .plate{height:62vh}
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <!-- ============ FIXED RAIL ============ -->
+  <aside class="rail">
+    <div class="rail__block">
+      <div class="wordmark"><b>Preview</b><span>—</span><span class="mono dim">Arch + Eng</span></div>
+      <p class="mono dim2" style="margin-top:8px">Rotterdam · Copenhagen · Est. 2011</p>
+    </div>
+
+    <div class="rail__block">
+      <p class="mono dim2" style="margin-bottom:8px">Now viewing</p>
+      <dl class="meta" id="meta">
+        <div class="meta__row"><dt class="mono">Project</dt><dd data-k="title">—</dd></div>
+        <div class="meta__row"><dt class="mono">Location</dt><dd data-k="loc">—</dd></div>
+        <div class="meta__row"><dt class="mono">Year</dt><dd data-k="year">—</dd></div>
+        <div class="meta__row"><dt class="mono">Area</dt><dd data-k="area">—</dd></div>
+        <div class="meta__row"><dt class="mono">Structure</dt><dd data-k="str">—</dd></div>
+      </dl>
+    </div>
+
+    <nav class="idx" id="idx" aria-label="Projects">
+      <p class="mono idx__t">Index — 8</p>
+    </nav>
+
+    <div class="rail__foot">
+      <a class="mono" href="mailto:brief@previewae.com" style="color:var(--oxide)">brief@previewae.com →</a>
+      <p class="mono dim2">Layout study · not final</p>
+    </div>
+  </aside>
+
+  <!-- ============ SCROLLING STAGE ============ -->
+  <main class="stage" id="stage"></main>
+</div>
+
+<script>
+const P = [
+  {id:'a',t:'Kessler Substation',loc:'Rotterdam, NL',year:2024,area:'4 180 m²',str:'In-situ concrete frame, 14 m span',ty:'Infrastructure',st:'built',note:'A transformer hall that must not read as a box. The load-bearing envelope folds into fourteen bays; the ventilation the equipment demands becomes the facade.'},
+  {id:'b',t:'Verge House',loc:'Hoge Veluwe, NL',year:2023,area:'310 m²',str:'Cantilevered slab on two blade walls',ty:'Residential',st:'built',note:'The plot falls four metres. The house is carried on two blades and steps once — the floor is level, the ground is not.'},
+  {id:'c',t:'Halle Nord',loc:'Copenhagen, DK',year:2025,area:'11 400 m²',str:'Retained riveted portal, timber inserts',ty:'Adaptive reuse',st:'under construction',note:'A 1918 shipbuilding hall with a structure worth more than the building. Everything new is demountable and touches nothing.'},
+  {id:'d',t:'Section Twelve',loc:'Antwerp, BE',year:2026,area:'28 600 m²',str:'Post-tensioned slab, transfer at L3',ty:'Mixed use',st:'design',note:'Twelve storeys over an undercroft that cannot take a column. The depth of the transfer becomes the only horizontal line.'},
+  {id:'e',t:'Quarry Chapel',loc:'Alentejo, PT',year:2022,area:'240 m²',str:'Load-bearing limestone, 900 mm',ty:'Civic',st:'built',note:'Built from the stone taken out of the hole it stands in. Thick enough to need no insulation and no services.'},
+  {id:'f',t:'Trellis Works',loc:'Ghent, BE',year:2025,area:'6 900 m²',str:'Glulam diagrid, 18 m clear',ty:'Education',st:'competition',note:'A hall that is a sports hall on Saturday and a market on Sunday. Every service threads through the structure, not below it.'},
+  {id:'g',t:'Founders Wall',loc:'Utrecht, NL',year:2021,area:'1 240 m²',str:'Precast rib panels',ty:'Civic',st:'built',note:'A retaining wall asked to become a building. The ribs that hold the earth back also hold the floors up.'},
+  {id:'h',t:'Ardent Exchange',loc:'Hamburg, DE',year:2026,area:'19 800 m²',str:'Composite frame, glazed cavity',ty:'Commercial',st:'design',note:'A double skin that does the work of a plant room. The cavity is the building service.'},
+];
+
+const stage = document.getElementById('stage');
+const idx = document.getElementById('idx');
+const meta = document.getElementById('meta');
+
+// Alternating rhythm: full plate, then a dense band, then the register.
+P.slice(0,3).forEach(p => stage.insertAdjacentHTML('beforeend', plate(p)));
+stage.insertAdjacentHTML('beforeend', band(P.slice(3,7)));
+P.slice(3,5).forEach(p => stage.insertAdjacentHTML('beforeend', plate(p)));
+stage.insertAdjacentHTML('beforeend', register(P));
+stage.insertAdjacentHTML('beforeend', `
+  <section class="split">
+    <div><h2>Architecture</h2><p>Brief, massing, envelope, detail. The drawing set is produced here and stays here through construction.</p></div>
+    <div><h2>Structural engineering</h2><p>Frames, transfers, foundations. Not appointed, not outsourced — the same team, in the same room, from the first sketch.</p></div>
+  </section>
+  <footer class="foot">
+    <p class="mono dim2">Preview Architects + Engineers</p>
+    <p class="mono dim2">Specimen content · imagery via Unsplash</p>
+  </footer>`);
+
+function plate(p){return `
+  <section class="plate" data-p="${p.id}">
+    <img src="img/${p.id}.jpg" alt="${p.t}" loading="lazy" />
+    <div class="plate__tr"><p class="mono dim">${p.ty}</p><p class="mono dim2">${p.st}</p></div>
+    <div class="plate__label">
+      <p class="mono dim">${p.loc} · ${p.year}</p>
+      <h2 class="plate__title">${p.t}</h2>
+      <p class="plate__note">${p.note}</p>
+    </div>
+  </section>`;}
+
+function band(items){return `<section class="band" data-p="~sheet">${items.map(p=>`
+  <figure><img src="img/${p.id}.jpg" alt="${p.t}" loading="lazy" /><figcaption class="mono">${p.t}</figcaption></figure>`).join('')}</section>`;}
+
+function register(items){return `
+  <section class="reg" data-p="~register">
+    <table>
+      <thead><tr><th style="width:34px">#</th><th>Project</th><th>Location</th><th>Type</th><th>Year</th><th>Area</th><th>Status</th></tr></thead>
+      <tbody>${items.map((p,i)=>`<tr>
+        <td class="num">${String(i+1).padStart(2,'0')}</td>
+        <td class="t">${p.t}</td><td class="dim">${p.loc}</td><td class="dim">${p.ty}</td>
+        <td class="num">${p.year}</td><td class="num">${p.area}</td>
+        <td class="st" data-s="${p.st}">${p.st}</td></tr>`).join('')}
+      </tbody>
+    </table>
+  </section>`;}
+
+// Index
+idx.insertAdjacentHTML('beforeend', P.map((p,i)=>`
+  <a href="#" data-go="${p.id}"><span class="n">${String(i+1).padStart(2,'0')}</span><span class="t">${p.t}</span></a>`).join(''));
+
+// The rail follows the stage. One direction only.
+const byId = Object.fromEntries(P.map(p=>[p.id,p]));
+const SUMMARY = {
+  '~sheet':    {t:'Contact sheet', loc:'Four projects', year:'—', area:'—', str:'Selected details'},
+  '~register': {t:'Register',      loc:'All projects', year:'2021—2026', area:'72 670 m² total', str:'Eight entries'},
+};
+
+function setActive(id){
+  const sum = SUMMARY[id];
+  if(sum){
+    meta.querySelector('[data-k="title"]').textContent = sum.t;
+    meta.querySelector('[data-k="loc"]').textContent = sum.loc;
+    meta.querySelector('[data-k="year"]').textContent = sum.year;
+    meta.querySelector('[data-k="area"]').textContent = sum.area;
+    meta.querySelector('[data-k="str"]').textContent = sum.str;
+    idx.querySelectorAll('a').forEach(a=>a.setAttribute('aria-current','false'));
+    return;
+  }
+  const p = byId[id]; if(!p) return;
+  meta.querySelector('[data-k="title"]').textContent = p.t;
+  meta.querySelector('[data-k="loc"]').textContent = p.loc;
+  meta.querySelector('[data-k="year"]').textContent = p.year;
+  meta.querySelector('[data-k="area"]').textContent = p.area;
+  meta.querySelector('[data-k="str"]').textContent = p.str;
+  idx.querySelectorAll('a').forEach(a=>a.setAttribute('aria-current', String(a.dataset.go===id)));
+}
+// Whichever section owns the middle of the viewport is the active one.
+// Ratio-sorting was wrong: a tall plate can out-score the section you are
+// actually looking at, and the rail then lies about what is on screen.
+const sections = [...stage.querySelectorAll('[data-p]')];
+let activeId = null;
+function sync(){
+  const mid = innerHeight / 2;
+  let best = null, bestD = Infinity;
+  for(const el of sections){
+    const r = el.getBoundingClientRect();
+    if(r.bottom < 0 || r.top > innerHeight) continue;
+    const d = Math.abs((r.top + r.bottom) / 2 - mid);
+    if(d < bestD){ bestD = d; best = el; }
+  }
+  if(best && best.dataset.p !== activeId){ activeId = best.dataset.p; setActive(activeId); }
+}
+let ticking = false;
+addEventListener('scroll',()=>{
+  if(ticking) return; ticking = true;
+  requestAnimationFrame(()=>{ sync(); ticking = false; });
+},{passive:true});
+addEventListener('resize', sync, {passive:true});
+sync();
+setActive(P[0].id);
+
+idx.addEventListener('click',e=>{
+  const a=e.target.closest('[data-go]'); if(!a) return; e.preventDefault();
+  document.querySelector(`.plate[data-p="${a.dataset.go}"]`)?.scrollIntoView({behavior:'smooth'});
+});
+</script>
+</body>
+</html>

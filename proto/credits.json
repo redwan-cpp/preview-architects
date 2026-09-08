@@ -1,0 +1,42 @@
+[
+  {
+    "id": "a",
+    "photographer": "Simone Hutsch",
+    "desc": "landscape photography of gray concrete building"
+  },
+  {
+    "id": "b",
+    "photographer": "준영 박",
+    "desc": "architectural photography of concrete monument"
+  },
+  {
+    "id": "c",
+    "photographer": "Wilhelm Gunkel",
+    "desc": "gray concrete flooring"
+  },
+  {
+    "id": "d",
+    "photographer": "Victor",
+    "desc": "high-rise building"
+  },
+  {
+    "id": "e",
+    "photographer": "Uran Wang",
+    "desc": "A view of a beach from behind a stone wall"
+  },
+  {
+    "id": "f",
+    "photographer": "Salvador Rios",
+    "desc": "Wooden framework of a building against a blue sky"
+  },
+  {
+    "id": "g",
+    "photographer": "Valentin Salja",
+    "desc": "gray and brown concrete wall"
+  },
+  {
+    "id": "h",
+    "photographer": "Christian Ladewig",
+    "desc": "architectural photography of glass building"
+  }
+]
